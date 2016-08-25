@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Compilador
 {
-    interface IEventMachine
+    interface IEventMachine<T>
     {
-        IEvent GetEvent();
-        List<IEvent> GetOutput();
+        T GetEvent();
     }
 }

@@ -11,7 +11,7 @@ namespace Compilador
         static void Main(string[] args)
         {
             var fileReader = new FileReader("program-test.txt");
-            var output = fileReader.GetOutput();
+            var lex = new Lex(fileReader);
             Console.Read();
         }
     }

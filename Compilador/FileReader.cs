@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Compilador
 {
-    class FileReader : IEventMachine
+    class FileReader : IEventMachine<LexEvent>
     {
         private FileStream _file;
         private byte[] ByteOrderMark = new byte[3] { 0xEF, 0xBB, 0xBF };
@@ -31,7 +31,7 @@ namespace Compilador
             }
         }
 
-        public IEvent GetEvent()
+        public LexEvent GetEvent()
         {
             int value = _file.ReadByte();
             if (value == -1)
@@ -40,22 +40,11 @@ namespace Compilador
             }
             else
             {
-                return new FileReaderEvent((byte) value);
-            }
-        }
-
-        public List<IEvent> GetOutput()
-        {
-            var output = new List<IEvent>();
-            FileReaderEvent ev = GetEvent() as FileReaderEvent;
-            while (ev != null)
-            {
-                var content = Convert.ToChar(ev.Content);
-                output.Add(new LexEvent(content));
+                var content = Convert.ToChar((byte) value);
+                output.Add();
                 Console.Write(content);
-                ev = GetEvent() as FileReaderEvent;
+                return new LexEvent(content);
             }
-            return output;
         }
     }
 }
