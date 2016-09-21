@@ -15,5 +15,17 @@ namespace Compilador
         }
         public Token Token { get; }
         public object Content { get; }
+
+        public override string ToString()
+        {
+            if (Content != null)
+            {
+                return "Token:" + Token.ToString() + " Value:" + Content.ToString();
+            }
+            else
+            {
+                return "Token:" + Token.ToString();
+            }
+        }
     }
 }

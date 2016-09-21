@@ -1,6 +1,6 @@
 Program = DefPart "EndOfFile" .
 DefPart = { VarDef | FuncDef } .
-VarDef = ( "int" | "bool" | "float" ) ( VarList | "[" Number "]" VarList) [ "=" Exp ]";".
+VarDef = ( "int" | "bool" | "float" )[ "[" Number "]" ] VarList [ "=" Exp ]";".
 VarList = VarName { "," VarName } .
 FuncDef = ( "void" | "int" | "bool" | "float" ) FuncName Block .
 VarDefPart = { VarDef } .
