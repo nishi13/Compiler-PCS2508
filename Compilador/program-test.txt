@@ -1,4 +1,5 @@
-﻿var a = 1;
-if (a > 0){
-	a = 2;
+﻿int a = 0;
+
+int main () {
+	return a;
 }

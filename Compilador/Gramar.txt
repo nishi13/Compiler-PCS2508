@@ -1,0 +1,30 @@
+Program = DefPart "EndOfFile" .
+DefPart = { VarDef | FuncDef } .
+VarDef = ( "int" | "bool" | "float" ) ( VarList | "[" Number "]" VarList) [ "=" Exp ]";".
+VarList = VarName { "," VarName } .
+FuncDef = ( "void" | "int" | "bool" | "float" ) FuncName Block .
+VarDefPart = { VarDef } .
+Block = "{" VarDefPart StatPart "}" .
+StatPart = { Stat ";" } .
+Stat = Assign | If | While | FuncCall .
+Assign = VarAccess "=" Exp .
+FuncCall = FuncName "(" ")" .
+StatBlock =(Stat | "{" StatPart "}")
+If = "if" "(" Exp ")" StatBlock ["else" StatBlock].
+While = "while" "(" Exp ")" StatBlock.
+Exp = Prim { ( "&&" | "||" ) Prim } .
+Prim = SimpExp [ ( "<" | "<=" | "!=" | "==" |">" | ">=" ) SimpExp ] .
+SimpExp = [ "-" ] Term { ( "+" | "-" ) Term } .
+Term = Fact { ( "*" | "/" | "\" ) Fact } .
+Fact = { "!" } ( Constant | VarAccess | "(" Exp ")" ) .
+VarAccess = VarName [ "[" Exp "]" ] .
+Constant = Float | Number | "true" | "false" .
+Name = (Letter | "_") { Letter | Digit | "_" } .
+Float = Number "." Number .
+Number = Digit { Digit }.
+Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" .
+Letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" |
+"k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" |
+"v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" |
+"G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q"
+| "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" .

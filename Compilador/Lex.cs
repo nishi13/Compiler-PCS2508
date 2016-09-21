@@ -16,20 +16,25 @@ namespace Compilador
         public Lex (IEventMachine<LexEvent> provider)
         {
             _provider = provider;
-            _reservedWord = new Dictionary<string, Token>
+            _reservedWord = new Dictionary<string, Token>()
             {
-                ("if", Token.If),
-                ("else", Token.Else),
-                ("while", Token.While),
-                ("func", Token.Func),
-                ("return", Token.Return)
+                { "if", Token.If },
+                { "else", Token.Else },
+                { "while", Token.While },
+                { "void", Token.Void },
+                { "return", Token.Return },
+                { "int", Token.IntDeclaration },
+                { "float", Token.FloatDeclaration },
+                { "bool", Token.BooleanDeclaration },
+                { "true", Token.True },
+                { "false", Token.False }
             };
         }
 
         public SinEvent GetEvent()
         {
             var content = NextEvent();
-            while (content  == '' || content == '\t')
+            while (Char.IsWhiteSpace(content) || Char.IsSeparator(content) || content == '\t')
             {
                 content = NextEvent();
             }
@@ -59,10 +64,76 @@ namespace Compilador
                     return new SinEvent(Token.CloseBrace);
                 case '\0':
                     return new SinEvent(Token.EndOfFile);
+                case '=':
+                    content = NextEvent();
+                    if (content == '=')
+                    {
+                        return new SinEvent(Token.Equals);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return new SinEvent(Token.Assign);
+                    }
+                case '!':
+                    content = NextEvent();
+                    if (content == '=')
+                    {
+                        return new SinEvent(Token.NotEquals);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return new SinEvent(Token.Not);
+                    }
+                case '<':
+                    content = NextEvent();
+                    if (content == '=')
+                    {
+                        return new SinEvent(Token.LessOrEquals);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return new SinEvent(Token.Less);
+                    }
+                case '>':
+                    content = NextEvent();
+                    if (content == '=')
+                    {
+                        return new SinEvent(Token.GreaterOrEquals);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return new SinEvent(Token.Greater);
+                    }
+                case '|':
+                    content = NextEvent();
+                    if (content == '|')
+                    {
+                        return new SinEvent(Token.Or);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return null;
+                    }
+                case '&':
+                    content = NextEvent();
+                    if (content == '&')
+                    {
+                        return new SinEvent(Token.And);
+                    }
+                    else
+                    {
+                        _savedContent = content;
+                        return null;
+                    }
                 default:
                     if (IsDigit(content)){
                         int buffer = 0;
-                        while (Content.IsDigit(content)){
+                        while (IsDigit(content)){
                             buffer = buffer * 10 + (int)Char.GetNumericValue(content);
                             content = NextEvent();
                         }
@@ -72,7 +143,7 @@ namespace Compilador
                             float fbuffer = buffer;
                             int mag = 10;
                             content = NextEvent();
-                            while (Content.IsDigit(content)){
+                            while (IsDigit(content)){
                                 fbuffer = fbuffer + ((int)Char.GetNumericValue(content))/mag;
                                 mag = mag * 10;
                                 content = NextEvent();
@@ -86,14 +157,14 @@ namespace Compilador
                             return new SinEvent(Token.Int, buffer);
                         }
                     }
-                    else if (IsLetter(Content)){
+                    else if (IsLetter(content)){
                         string buffer = "";
-                        while (Content.IsDigit(content) || Content.IsLetter(content)){
+                        while (IsDigit(content) || IsLetter(content)){
                             buffer = buffer + content;
                             content = NextEvent();
                         }
                         _savedContent = content;
-                        if (_reservedWord.Contains(buffer))
+                        if (_reservedWord.ContainsKey(buffer))
                         {
                             return new SinEvent(_reservedWord[buffer]);
                         }
@@ -103,7 +174,7 @@ namespace Compilador
                         }
                     }
                     else {
-                        return null
+                        return null;
                     }
             }
         }
@@ -115,10 +186,10 @@ namespace Compilador
 
         public bool IsLetter(char content)
         {
-            return Char.IsLetter(content);
+            return Char.IsLetter(content) || content == '_';
         }
 
-        private LexEvent NextEvent ()
+        private char NextEvent ()
         {
             if (_savedContent != '\0')
             {

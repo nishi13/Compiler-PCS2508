@@ -41,8 +41,6 @@ namespace Compilador
             else
             {
                 var content = Convert.ToChar((byte) value);
-                output.Add();
-                Console.Write(content);
                 return new LexEvent(content);
             }
         }
