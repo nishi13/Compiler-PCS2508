@@ -53,34 +53,35 @@ namespace Compilador
 
             public void Step (SinEvent current, SinEvent next)
             {
-                if (varDef.Success || funcDef.Success)
+                if (!varDef.Completed)
                 {
-                    varDef = new VarDef();
-                    funcDef = new FuncDef();
+                    varDef.Step(current, next);
                 }
-                else if (!varDef.Completed || !funcDef.Completed)
+                if (!funcDef.Completed)
                 {
-                    if (!varDef.Completed)
-                    {
-                        varDef.Step(current, next);
-                    }
-                    if (!funcDef.Completed)
-                    {
-                        funcDef.Step(current, next);
-                    }
+                    funcDef.Step(current, next);
                 }
-                else
+
+                if (varDef.Completed && funcDef.Completed)
                 {
-                    if (current.Token == Token.EndOfFile)
+                    if (varDef.Success || funcDef.Success)
                     {
-                        Success = true;
-                        Completed = true;
+                        varDef = new VarDef();
+                        funcDef = new FuncDef();
                     }
                     else
                     {
-                        error("Unexpected " + current.ToString());
-                        Success = false;
-                        Completed = true;
+                        if (current.Token == Token.EndOfFile)
+                        {
+                            Success = true;
+                            Completed = true;
+                        }
+                        else
+                        {
+                            error("Unexpected " + current.ToString());
+                            Success = false;
+                            Completed = true;
+                        }
                     }
                 }
             }
@@ -128,21 +129,18 @@ namespace Compilador
                         }
                         else
                         {
-                            error("Expected int but got " + current.ToString());
                             Completed = true;
                         }
                         break;
                     case 3:
                         if (current.Token != Token.CloseBracket)
                         {
-                            error("Expected ']' but got " + current.ToString());
                             Completed = true;
                         }
                         break;
                     case 4:
                         if (current.Token != Token.Id)
                         {
-                            error("Expected VarName but got " + current.ToString());
                             Completed = true;
                         }
                         else
@@ -164,7 +162,6 @@ namespace Compilador
                         }
                         else if(current.Token != Token.Comma)
                         {
-                            error("Unexpected " + current.ToString());
                             Completed = true;
                         }
                         break;
@@ -176,7 +173,6 @@ namespace Compilador
                         }
                         else
                         {
-                            error("Expected VarName but got " + current.ToString());
                             Completed = true;
                         }
                         break;
@@ -204,7 +200,6 @@ namespace Compilador
                         }
                         else
                         {
-                            error("Unexpected " + current.ToString());
                             Completed = true;
                         }
                         break;
@@ -261,6 +256,19 @@ namespace Compilador
                         }
                         break;
                     case 3:
+                        if (current.Token == Token.CloseParentheses)
+                        {
+                            doStep = false;
+                            _step = 8;
+                        }
+                        else
+                        {
+                            doStep = false;
+                            _step = 4;
+                            Step(current, next);
+                        }
+                        break;
+                    case 4:
                         _paramType = current.Token;
                         if (!IsVarType(_paramType))
                         {
@@ -268,7 +276,7 @@ namespace Compilador
                             Success = false;
                         }
                         break;
-                    case 4:
+                    case 5:
                         if (current.Token == Token.Id)
                         {
                             //TODO: resolve paramenter name usig _paramType
@@ -279,28 +287,28 @@ namespace Compilador
                             Success = false;
                         }
                         break;
-                    case 5:
+                    case 6:
                         if (current.Token == Token.Comma)
                         {
                             doStep = false;
-                            _step = 3;
+                            _step = 4;
                         }
                         break;
-                    case 6:
+                    case 7:
                         if (current.Token != Token.CloseParentheses)
                         {
                             Completed = true;
                             Success = false;
                         }
                         break;
-                    case 7:
+                    case 8:
                         if (current.Token != Token.OpenBrace)
                         {
                             Completed = true;
                             Success = false;
                         }
                         break;
-                    case 8:
+                    case 9:
                         doStep = false;
                         if (varDef == null)
                         {
@@ -315,20 +323,20 @@ namespace Compilador
                             }
                             else
                             {
-                                _step = 9;
+                                _step = 10;
                                 Step(current, next);
                             }
                         }
                         break;
-                    case 9:
+                    case 10:
                         doStep = false;
                         if (current.Token == Token.CloseBrace)
                         {
-                            _step = 10;
+                            _step = 11;
                             Step(current, next);
                         }
                         break;
-                    case 10:
+                    case 11:
                         Completed = true;
                         if (current.Token == Token.CloseBrace)
                         {
