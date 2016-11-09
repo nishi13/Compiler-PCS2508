@@ -50,6 +50,8 @@ namespace Compilador
                     return new SinEvent(Token.Division);
                 case ';':
                     return new SinEvent(Token.Semicolon);
+                case ',':
+                    return new SinEvent(Token.Comma); 
                 case '(':
                     return new SinEvent(Token.OpenParentheses);
                 case ')':
@@ -174,7 +176,7 @@ namespace Compilador
                         }
                     }
                     else {
-                        return null;
+                        return new SinEvent(Token.Unknown, content);
                     }
             }
         }

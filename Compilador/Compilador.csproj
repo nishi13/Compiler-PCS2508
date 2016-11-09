@@ -51,6 +51,7 @@
     <Compile Include="LexEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sin.cs" />
     <Compile Include="SinEvent.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>

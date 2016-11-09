@@ -2,14 +2,16 @@ Program = DefPart "EndOfFile" .
 DefPart = { VarDef | FuncDef } .
 VarDef = ( "int" | "bool" | "float" )[ "[" Number "]" ] VarList [ "=" Exp ]";".
 VarList = VarName { "," VarName } .
-FuncDef = ( "void" | "int" | "bool" | "float" ) FuncName Block .
+FuncDef = ( "void" | "int" | "bool" | "float" ) FuncName "(" Params ")" Block .
+Params = [( "int" | "bool" | "float" ) VarName { "," ( "int" | "bool" | "float" ) VarName }] .
 VarDefPart = { VarDef } .
 Block = "{" VarDefPart StatPart "}" .
 StatPart = { Stat ";" } .
-Stat = Assign | If | While | FuncCall .
+Stat = Assign | If | While | FuncCall | Return.
+Return = "return" Exp
 Assign = VarAccess "=" Exp .
 FuncCall = FuncName "(" ")" .
-StatBlock =(Stat | "{" StatPart "}")
+StatBlock =((Stat ";") | ("{" StatPart "}"))
 If = "if" "(" Exp ")" StatBlock ["else" StatBlock].
 While = "while" "(" Exp ")" StatBlock.
 Exp = Prim { ( "&&" | "||" ) Prim } .

@@ -2,6 +2,7 @@ namespace Compilador
 {
     enum Token
     {
+        Unknown,
         Id,
         Int,
         Float,
@@ -18,6 +19,7 @@ namespace Compilador
         Multiplication,
         Division,
         Semicolon,
+        Comma,
         OpenParentheses,
         CloseParentheses,
         OpenBrace,
