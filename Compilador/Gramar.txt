@@ -6,19 +6,19 @@ FuncDef = ( "void" | "int" | "bool" | "float" ) FuncName "(" Params ")" Block .
 Params = [( "int" | "bool" | "float" ) VarName { "," ( "int" | "bool" | "float" ) VarName }] .
 VarDefPart = { VarDef } .
 Block = "{" VarDefPart StatPart "}" .
-StatPart = { Stat ";" } .
-Stat = Assign | If | While | FuncCall | Return.
-Return = "return" Exp
-Assign = VarAccess "=" Exp .
-FuncCall = FuncName "(" ")" .
-StatBlock =((Stat ";") | ("{" StatPart "}"))
+StatPart = { Stat } .
+Stat = Assign | If | While | (FuncCall ";") | Return.
+Return = "return" Exp ";" .
+Assign = VarAccess "=" Exp ";" .
+FuncCall = FuncName "(" [Exp { "," Exp } ] ")" .
+StatBlock =(Stat | ("{" StatPart "}"))
 If = "if" "(" Exp ")" StatBlock ["else" StatBlock].
 While = "while" "(" Exp ")" StatBlock.
 Exp = Prim { ( "&&" | "||" ) Prim } .
 Prim = SimpExp [ ( "<" | "<=" | "!=" | "==" |">" | ">=" ) SimpExp ] .
 SimpExp = [ "-" ] Term { ( "+" | "-" ) Term } .
-Term = Fact { ( "*" | "/" | "\" ) Fact } .
-Fact = { "!" } ( Constant | VarAccess | "(" Exp ")" ) .
+Term = Fact { ( "*" | "/" ) Fact } .
+Fact = { "!" } ( Constant | VarAccess | "(" Exp ")" | FuncCall) .
 VarAccess = VarName [ "[" Exp "]" ] .
 Constant = Float | Number | "true" | "false" .
 Name = (Letter | "_") { Letter | Digit | "_" } .
